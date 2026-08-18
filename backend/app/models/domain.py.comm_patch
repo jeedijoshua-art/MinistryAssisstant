@@ -1,0 +1,36 @@
+--- app/models/domain.py
++++ app/models/domain.py
+@@ -67,6 +67,7 @@
+     tags: Mapped[list[SermonTag]] = relationship(secondary="sermon_tags_link", back_populates="sermons")
+     references: Mapped[list[SermonReference]] = relationship(back_populates="sermon", cascade="all, delete-orphan")
+     creative_projects: Mapped[list[CreativeProject]] = relationship(back_populates="sermon")
++    communication_projects: Mapped[list[CommunicationProject]] = relationship(back_populates="sermon")
+ 
+ 
+ class SermonSection(UUIDTimestampMixin, Base):
+@@ -204,4 +205,24 @@
+     project: Mapped[Optional[CreativeProject]] = relationship(back_populates="assets")
+     folder: Mapped[Optional[AssetFolder]] = relationship(back_populates="assets")
+     tags: Mapped[list[AssetTag]] = relationship(secondary="asset_tags_link")
++
++
++class CommunicationProject(UUIDTimestampMixin, Base):
++    __tablename__ = "communication_projects"
++    sermon_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("sermons.id", ondelete="SET NULL"), index=True)
++    title: Mapped[str] = mapped_column(String(255), index=True)
++    campaign_type: Mapped[str] = mapped_column(String(100), index=True) # e.g. Sunday Service Announcement
++    status: Mapped[str] = mapped_column(String(50), default="draft")
++    sermon: Mapped[Optional[Sermon]] = relationship(back_populates="communication_projects")
++    assets: Mapped[list[CommunicationAsset]] = relationship(back_populates="project", cascade="all, delete-orphan")
++
++
++class CommunicationAsset(UUIDTimestampMixin, Base):
++    __tablename__ = "communication_assets"
++    project_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("communication_projects.id", ondelete="SET NULL"), index=True)
++    platform: Mapped[str] = mapped_column(String(100), index=True) # e.g. Instagram, Newsletter
++    content_length: Mapped[str] = mapped_column(String(50), default="Medium") # Short, Medium, Long
++    content: Mapped[Optional[str]] = mapped_column(Text)
++    status: Mapped[str] = mapped_column(String(50), default="draft")
++    project: Mapped[Optional[CommunicationProject]] = relationship(back_populates="assets")
+ EOF
+patch app/models/domain.py app/models/domain.py.comm_patch

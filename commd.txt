@@ -1,0 +1,6 @@
+cd ~/Documents/ZTP/backend
+source .venv/bin/activate
+uv run uvicorn app.main:app --reload
+
+cd ~/Documents/ZTP/frontend
+npm run dev 

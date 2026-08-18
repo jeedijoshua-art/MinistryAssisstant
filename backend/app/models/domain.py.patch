@@ -1,0 +1,51 @@
+--- app/models/domain.py
++++ app/models/domain.py
+@@ -111,26 +111,6 @@
+     sermon: Mapped[Sermon] = relationship(back_populates="references")
+ 
+ 
+-class Prayer(UUIDTimestampMixin, Base):
+-    __tablename__ = "prayers"
+-    title: Mapped[str] = mapped_column(String(255), index=True)
+-    content: Mapped[Optional[str]] = mapped_column(Text)
+-    status: Mapped[str] = mapped_column(String(30), default="draft", index=True)
+-
+-
+-class PosterTemplate(UUIDTimestampMixin, Base):
+-    __tablename__ = "poster_templates"
+-    name: Mapped[str] = mapped_column(String(160), unique=True, index=True)
+-    configuration: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
+-    posters: Mapped[list[Poster]] = relationship(back_populates="template")
+-
+-
+-class Poster(UUIDTimestampMixin, Base):
+-    __tablename__ = "posters"
+-    template_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("poster_templates.id", ondelete="SET NULL"), index=True)
+-    title: Mapped[str] = mapped_column(String(255), index=True)
+-    status: Mapped[str] = mapped_column(String(30), default="draft", index=True)
+-    template: Mapped[Optional[PosterTemplate]] = relationship(back_populates="posters")
+-
+-
+ class BibleCharacter(UUIDTimestampMixin, Base):
+     __tablename__ = "bible_characters"
+@@ -159,20 +139,6 @@
+     bible_version: Mapped[Optional[BibleVersion]] = relationship()
+ 
+ 
+-class Announcement(UUIDTimestampMixin, Base):
+-    __tablename__ = "announcements"
+-    title: Mapped[str] = mapped_column(String(255), index=True)
+-    body: Mapped[str] = mapped_column(Text)
+-    published: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+-
+-
+-class Media(UUIDTimestampMixin, Base):
+-    __tablename__ = "media"
+-    file_name: Mapped[str] = mapped_column(String(255), index=True)
+-    storage_key: Mapped[str] = mapped_column(String(512), unique=True)
+-    mime_type: Mapped[str] = mapped_column(String(120), index=True)
+-    size_bytes: Mapped[int] = mapped_column(Integer, default=0)
+-
+-
+ class Preferences(UUIDTimestampMixin, Base):
+     __tablename__ = "preferences"
